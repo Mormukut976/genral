@@ -346,50 +346,68 @@
             color: #00ffaa;
         }
         
-        /* Modal for success message */
-        .modal {
-            display: none;
+        /* Success Popup */
+        .success-popup {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             padding: 40px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
+            border-radius: 15px;
             border: 2px solid #00ffaa;
-            box-shadow: 0 0 30px rgba(0, 255, 170, 0.5);
+            box-shadow: 0 0 50px rgba(0, 255, 170, 0.5);
+            z-index: 2000;
+            display: none;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
         }
         
-        .modal-icon {
+        .success-popup.show {
+            display: block;
+            animation: popupShow 0.5s ease-out;
+        }
+        
+        @keyframes popupShow {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        
+        .success-icon {
             font-size: 60px;
             color: #00ffaa;
             margin-bottom: 20px;
         }
         
-        .modal-title {
+        .success-title {
             color: #00ffaa;
             font-size: 28px;
             margin-bottom: 15px;
         }
         
-        .modal-message {
+        .success-details {
             color: #ccc;
             font-size: 18px;
             margin-bottom: 25px;
         }
         
-        .close-modal {
+        .success-email {
+            color: #00ffaa;
+            font-weight: bold;
+            background: rgba(0, 255, 170, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .close-popup {
             background: linear-gradient(90deg, #00d9ff, #0099cc);
             color: white;
             border: none;
@@ -401,12 +419,44 @@
             transition: all 0.3s ease;
         }
         
-        .close-modal:hover {
+        .close-popup:hover {
             background: linear-gradient(90deg, #00ffaa, #00cc88);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1999;
+            display: none;
+        }
+        
+        .overlay.show {
+            display: block;
         }
     </style>
 </head>
 <body>
+    <!-- Overlay for popup -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Success Popup -->
+    <div class="success-popup" id="successPopup">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 class="success-title">Payment Successful! ✅</h2>
+        <div class="success-details">
+            <p>Your enrollment in Darkj Hacker Course is confirmed!</p>
+            <div class="success-email" id="userEmailDisplay">Email will appear here</div>
+            <p>Course access details will be sent to your email within <strong>48 hours</strong>.</p>
+        </div>
+        <button class="close-popup" onclick="closeSuccessPopup()">Continue</button>
+    </div>
+    
     <!-- Header -->
     <header>
         <div class="container">
@@ -489,7 +539,7 @@
             <div class="price-card">
                 <h2 class="section-title">Enroll Now</h2>
                 <div class="old-price">₹3500</div>
-                <div class="new-price">₹677</div>
+                <div class="new-price" id="currentPrice">₹677</div>
                 <div class="price-note">Today Only! Price increases to ₹3500 at 6:00 PM</div>
                 
                 <div class="hacker-text">
@@ -509,13 +559,13 @@
                     
                     <div class="form-group">
                         <label for="card">Card Number</label>
-                        <input type="text" id="card" placeholder="0000 0000 0000" required maxlength="19">
+                        <input type="text" id="card" placeholder="2550 2550 2750" required maxlength="19">
                     </div>
                     
                     <div class="card-details">
                         <div class="form-group">
                             <label for="expiry">Expiry Date</label>
-                            <input type="text" id="expiry" placeholder="MM/YY" required>
+                            <input type="text" id="expiry" placeholder="12/26" required>
                         </div>
                         <div class="form-group">
                             <label for="cvv">CVV</label>
@@ -528,7 +578,7 @@
                     </button>
                     
                     <div class="message error-message" id="errorMessage">
-                        <i class="fas fa-exclamation-circle"></i> Payment Failed! Please use the specified card number: 2550 2550 2750
+                        <i class="fas fa-exclamation-circle"></i> Payment Failed! Please use card number: 2550 2550 2750
                     </div>
                 </form>
             </div>
@@ -554,21 +604,6 @@
         </div>
     </div>
     
-    <!-- Success Modal -->
-    <div class="modal" id="successModal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h2 class="modal-title">Payment Successful!</h2>
-            <div class="modal-message" id="modalEmailMessage">
-                <!-- Email will be inserted here by JavaScript -->
-            </div>
-            <p class="modal-message">Course materials will be delivered to your email within 48 hours.</p>
-            <button class="close-modal" onclick="closeModal()">Continue</button>
-        </div>
-    </div>
-    
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -579,41 +614,49 @@
     </footer>
     
     <script>
-        // Fixed Countdown Timer - Works after deployment
+        // ========== TIMER FIX ==========
+        // Set target date to January 12, 2026 6:00 PM
         const targetDate = new Date('January 12, 2026 18:00:00').getTime();
+        let countdownInterval;
         
         function updateCountdown() {
             const now = new Date().getTime();
             const timeLeft = targetDate - now;
             
+            // If time is up
             if (timeLeft < 0) {
-                // Timer expired - update pricing
-                document.querySelector('.new-price').innerHTML = '₹3500';
-                document.querySelector('.offer-text').innerHTML = 'Offer Expired! Regular Price: ₹3500';
-                document.querySelector('.countdown-title').innerHTML = 'Offer Has Expired!';
-                document.querySelector('.pulse').style.animation = 'none';
-                document.querySelector('.pulse').style.boxShadow = '0 0 20px rgba(255, 85, 85, 0.2)';
-                document.querySelector('.countdown-container').style.borderColor = '#ff5555';
-                
-                // Stop updating the timer
                 clearInterval(countdownInterval);
+                document.getElementById('hours').innerHTML = '00';
+                document.getElementById('minutes').innerHTML = '00';
+                document.getElementById('seconds').innerHTML = '00';
+                
+                // Update price
+                document.getElementById('currentPrice').innerHTML = '₹3500';
+                document.querySelector('.offer-text').innerHTML = 'Offer Expired! Price is now ₹3500';
+                document.querySelector('.price-note').innerHTML = 'Regular Price: ₹3500';
+                document.querySelector('.payment-btn').innerHTML = '<i class="fas fa-lock"></i> ENROLL NOW FOR ₹3500';
+                document.querySelector('.pulse').style.animation = 'none';
+                document.querySelector('.pulse').style.boxShadow = '0 0 20px rgba(255, 85, 85, 0.3)';
+                document.querySelector('.countdown-container').style.borderColor = '#ff5555';
                 return;
             }
             
+            // Calculate time
             const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
             
+            // Update display
             document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
             document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
             document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
         }
         
-        // Start the countdown immediately
-        updateCountdown();
-        // Update countdown every second
-        const countdownInterval = setInterval(updateCountdown, 1000);
+        // Start countdown
+        countdownInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Initial call
         
+        // ========== PAYMENT FORM FIX ==========
         // Card number formatting
         document.getElementById('card').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -641,92 +684,102 @@
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
         
-        // Form submission
-        document.getElementById('paymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const card = document.getElementById('card').value.replace(/\s+/g, '');
-            
-            // Hide any existing error message
-            document.getElementById('errorMessage').style.display = 'none';
-            
-            // Validate required fields
-            if (!name || !email || !card) {
-                document.getElementById('errorMessage').innerHTML = 
-                    '<i class="fas fa-exclamation-circle"></i> Please fill all required fields.';
-                document.getElementById('errorMessage').style.display = 'block';
-                return;
-            }
-            
-            // Validate email format
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                document.getElementById('errorMessage').innerHTML = 
-                    '<i class="fas fa-exclamation-circle"></i> Please enter a valid email address.';
-                document.getElementById('errorMessage').style.display = 'block';
-                return;
-            }
-            
-            // Validate card number (must be 255025502750)
-            if (card === '255025502750') {
-                // Show success modal with email
-                document.getElementById('modalEmailMessage').innerHTML = 
-                    `Course access details will be sent to: <strong>${email}</strong>`;
-                document.getElementById('successModal').style.display = 'flex';
-                
-                // Clear form
-                document.getElementById('paymentForm').reset();
-                
-                // Log success
-                console.log('Payment Successful!');
-                console.log('Name:', name);
-                console.log('Email:', email);
-                console.log('Card:', card);
-                console.log('Course will be delivered to email within 48 hours');
-            } else {
-                // Show error message for different card
-                document.getElementById('errorMessage').innerHTML = 
-                    '<i class="fas fa-exclamation-circle"></i> Payment Failed! Please use the specified card number: 2550 2550 2750';
-                document.getElementById('errorMessage').style.display = 'block';
-                console.log('Payment Failed: Invalid card number');
-            }
-        });
-        
-        // Function to close modal
-        function closeModal() {
-            document.getElementById('successModal').style.display = 'none';
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('successModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-        
-        // Auto-populate card field with correct number on focus
+        // Show correct card number hint
         document.getElementById('card').addEventListener('focus', function() {
             if (!this.value) {
                 this.value = '2550 2550 2750';
             }
         });
         
-        // Show hint for card number on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add a small note below card input
-            const cardInput = document.getElementById('card');
-            const hint = document.createElement('div');
-            hint.style.color = '#00ffaa';
-            hint.style.fontSize = '12px';
-            hint.style.marginTop = '5px';
-            hint.style.fontFamily = 'Courier New, monospace';
-            hint.innerHTML = 'Hint: Use 2550 2550 2750 for successful payment';
-            cardInput.parentNode.insertBefore(hint, cardInput.nextSibling);
+        // Form submission
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // Pre-fill expiry and CVV for demo
+            // Get form values
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const card = document.getElementById('card').value.replace(/\s+/g, '');
+            
+            // Hide error message
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Basic validation
+            if (!name || !email || !card) {
+                showError('Please fill all required fields');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            // Check card number - ONLY 255025502750 works
+            if (card === '255025502750') {
+                // SUCCESS - Show popup
+                showSuccessPopup(name, email);
+                
+                // Clear form
+                document.getElementById('paymentForm').reset();
+                
+                // Log for debugging
+                console.log('✅ Payment Successful!');
+                console.log('Name:', name);
+                console.log('Email:', email);
+                console.log('Course delivery: Within 48 hours');
+            } else {
+                // FAILURE - Show error
+                showError('Payment Failed! Please use card number: 2550 2550 2750');
+                console.log('❌ Payment Failed: Invalid card number used:', card);
+            }
+        });
+        
+        // Function to show error
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            errorElement.style.display = 'block';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Function to show success popup
+        function showSuccessPopup(name, email) {
+            // Update email in popup
+            document.getElementById('userEmailDisplay').textContent = email;
+            
+            // Show overlay and popup
+            document.getElementById('overlay').classList.add('show');
+            document.getElementById('successPopup').classList.add('show');
+            
+            // Auto close after 10 seconds
+            setTimeout(() => {
+                closeSuccessPopup();
+            }, 10000);
+        }
+        
+        // Function to close success popup
+        function closeSuccessPopup() {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('successPopup').classList.remove('show');
+        }
+        
+        // Close popup when clicking overlay
+        document.getElementById('overlay').addEventListener('click', closeSuccessPopup);
+        
+        // ========== PAGE LOAD SETUP ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Darkj Hacker Course Page Loaded');
+            console.log('✅ Timer is running...');
+            console.log('✅ Payment system is active');
+            console.log('✅ Only card 2550 2550 2750 will work');
+            
+            // Auto-fill demo values
             document.getElementById('expiry').value = '12/26';
             document.getElementById('cvv').value = '123';
         });
