@@ -27,7 +27,7 @@
             padding: 20px;
         }
         
-        /* Header Styles */
+        /* Header */
         header {
             background: linear-gradient(135deg, #111122 0%, #1a1a2e 100%);
             padding: 20px 0;
@@ -78,6 +78,13 @@
             text-align: center;
             border: 1px solid #00d9ff;
             box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 217, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0); }
         }
         
         .countdown-title {
@@ -299,7 +306,7 @@
             font-size: 14px;
         }
         
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -325,17 +332,7 @@
             }
         }
         
-        /* Special effects */
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 217, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 217, 255, 0); }
-        }
-        
+        /* Hacker Text */
         .hacker-text {
             font-family: 'Courier New', monospace;
             background-color: #001122;
@@ -346,68 +343,73 @@
             color: #00ffaa;
         }
         
-        /* Success Popup */
-        .success-popup {
+        /* Popup Styles */
+        .popup-overlay {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .popup-content {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             padding: 40px;
             border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
             border: 2px solid #00ffaa;
             box-shadow: 0 0 50px rgba(0, 255, 170, 0.5);
-            z-index: 2000;
-            display: none;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
+            animation: popupAppear 0.5s ease-out;
         }
         
-        .success-popup.show {
-            display: block;
-            animation: popupShow 0.5s ease-out;
-        }
-        
-        @keyframes popupShow {
-            0% {
+        @keyframes popupAppear {
+            from {
                 opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
+                transform: scale(0.8);
             }
-            100% {
+            to {
                 opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
+                transform: scale(1);
             }
         }
         
-        .success-icon {
+        .popup-icon {
             font-size: 60px;
             color: #00ffaa;
             margin-bottom: 20px;
         }
         
-        .success-title {
+        .popup-title {
             color: #00ffaa;
             font-size: 28px;
             margin-bottom: 15px;
         }
         
-        .success-details {
+        .popup-text {
             color: #ccc;
             font-size: 18px;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
         
-        .success-email {
+        .user-email {
             color: #00ffaa;
             font-weight: bold;
             background: rgba(0, 255, 170, 0.1);
             padding: 10px;
             border-radius: 5px;
-            margin: 10px 0;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
         }
         
-        .close-popup {
+        .popup-btn {
             background: linear-gradient(90deg, #00d9ff, #0099cc);
             color: white;
             border: none;
@@ -419,42 +421,29 @@
             transition: all 0.3s ease;
         }
         
-        .close-popup:hover {
+        .popup-btn:hover {
             background: linear-gradient(90deg, #00ffaa, #00cc88);
-        }
-        
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1999;
-            display: none;
-        }
-        
-        .overlay.show {
-            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Overlay for popup -->
-    <div class="overlay" id="overlay"></div>
-    
     <!-- Success Popup -->
-    <div class="success-popup" id="successPopup">
-        <div class="success-icon">
-            <i class="fas fa-check-circle"></i>
+    <div class="popup-overlay" id="successPopup">
+        <div class="popup-content">
+            <div class="popup-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="popup-title">🎉 Payment Successful!</h2>
+            <div class="popup-text">
+                <p>Your enrollment in <strong>Darkj Hacker Course</strong> is confirmed!</p>
+                <div class="user-email" id="popupEmail">example@email.com</div>
+                <p>Course access details will be sent to your email within <strong>48 hours</strong>.</p>
+                <p style="margin-top: 15px; font-size: 16px; color: #00d9ff;">
+                    <i class="fas fa-envelope"></i> Check your inbox and spam folder
+                </p>
+            </div>
+            <button class="popup-btn" onclick="closePopup()">Continue</button>
         </div>
-        <h2 class="success-title">Payment Successful! ✅</h2>
-        <div class="success-details">
-            <p>Your enrollment in Darkj Hacker Course is confirmed!</p>
-            <div class="success-email" id="userEmailDisplay">Email will appear here</div>
-            <p>Course access details will be sent to your email within <strong>48 hours</strong>.</p>
-        </div>
-        <button class="close-popup" onclick="closeSuccessPopup()">Continue</button>
     </div>
     
     <!-- Header -->
@@ -479,23 +468,23 @@
     
     <div class="container">
         <!-- Countdown Timer -->
-        <div class="countdown-container pulse">
+        <div class="countdown-container">
             <h2 class="countdown-title">Limited Time Offer!</h2>
             <div class="countdown">
                 <div class="countdown-box">
-                    <div class="countdown-value" id="hours">00</div>
+                    <div class="countdown-value" id="hours">06</div>
                     <div class="countdown-label">Hours</div>
                 </div>
                 <div class="countdown-box">
-                    <div class="countdown-value" id="minutes">00</div>
+                    <div class="countdown-value" id="minutes">30</div>
                     <div class="countdown-label">Minutes</div>
                 </div>
                 <div class="countdown-box">
-                    <div class="countdown-value" id="seconds">00</div>
+                    <div class="countdown-value" id="seconds">45</div>
                     <div class="countdown-label">Seconds</div>
                 </div>
             </div>
-            <div class="offer-text">
+            <div class="offer-text" id="offerText">
                 Today Only: ₹677 (After 6:00 PM - ₹3500)
             </div>
         </div>
@@ -543,32 +532,32 @@
                 <div class="price-note">Today Only! Price increases to ₹3500 at 6:00 PM</div>
                 
                 <div class="hacker-text">
-                    <strong>Special Offer:</strong> Use card number <strong>2550 2550 2750</strong> for successful payment
+                    <i class="fas fa-key"></i> <strong>TEST CARD:</strong> 2550 2550 2750
                 </div>
                 
                 <form class="payment-form" id="paymentForm">
                     <div class="form-group">
-                        <label for="name">Full Name</label>
+                        <label for="name"><i class="fas fa-user"></i> Full Name</label>
                         <input type="text" id="name" placeholder="Enter your full name" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email Address</label>
+                        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
                         <input type="email" id="email" placeholder="Enter your email" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="card">Card Number</label>
+                        <label for="card"><i class="fas fa-credit-card"></i> Card Number</label>
                         <input type="text" id="card" placeholder="2550 2550 2750" required maxlength="19">
                     </div>
                     
                     <div class="card-details">
                         <div class="form-group">
-                            <label for="expiry">Expiry Date</label>
-                            <input type="text" id="expiry" placeholder="12/26" required>
+                            <label for="expiry"><i class="fas fa-calendar"></i> Expiry Date</label>
+                            <input type="text" id="expiry" placeholder="MM/YY" required>
                         </div>
                         <div class="form-group">
-                            <label for="cvv">CVV</label>
+                            <label for="cvv"><i class="fas fa-lock"></i> CVV</label>
                             <input type="text" id="cvv" placeholder="123" required maxlength="3">
                         </div>
                     </div>
@@ -578,7 +567,7 @@
                     </button>
                     
                     <div class="message error-message" id="errorMessage">
-                        <i class="fas fa-exclamation-circle"></i> Payment Failed! Please use card number: 2550 2550 2750
+                        <i class="fas fa-exclamation-circle"></i> Payment Failed! Please use card: 2550 2550 2750
                     </div>
                 </form>
             </div>
@@ -612,176 +601,176 @@
             <p>Contact: support@darkjhacker.com | +91-XXXXXXX</p>
         </div>
     </footer>
-    
+
     <script>
-        // ========== TIMER FIX ==========
-        // Set target date to January 12, 2026 6:00 PM
-        const targetDate = new Date('January 12, 2026 18:00:00').getTime();
-        let countdownInterval;
-        
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const timeLeft = targetDate - now;
+        // ==================== TIMER FIX ====================
+        // Set timer to expire at 6:00 PM today (January 12, 2026)
+        function setupTimer() {
+            // Get today's date at 6:00 PM
+            const today = new Date();
+            today.setFullYear(2026, 0, 12); // January 12, 2026 (month is 0-indexed)
+            today.setHours(18, 0, 0, 0); // 6:00 PM
             
-            // If time is up
-            if (timeLeft < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById('hours').innerHTML = '00';
-                document.getElementById('minutes').innerHTML = '00';
-                document.getElementById('seconds').innerHTML = '00';
+            const targetTime = today.getTime();
+            
+            function updateTimer() {
+                const now = new Date().getTime();
+                const timeLeft = targetTime - now;
                 
-                // Update price
-                document.getElementById('currentPrice').innerHTML = '₹3500';
-                document.querySelector('.offer-text').innerHTML = 'Offer Expired! Price is now ₹3500';
-                document.querySelector('.price-note').innerHTML = 'Regular Price: ₹3500';
-                document.querySelector('.payment-btn').innerHTML = '<i class="fas fa-lock"></i> ENROLL NOW FOR ₹3500';
-                document.querySelector('.pulse').style.animation = 'none';
-                document.querySelector('.pulse').style.boxShadow = '0 0 20px rgba(255, 85, 85, 0.3)';
-                document.querySelector('.countdown-container').style.borderColor = '#ff5555';
-                return;
-            }
-            
-            // Calculate time
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-            
-            // Update display
-            document.getElementById('hours').innerHTML = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').innerHTML = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').innerHTML = seconds.toString().padStart(2, '0');
-        }
-        
-        // Start countdown
-        countdownInterval = setInterval(updateCountdown, 1000);
-        updateCountdown(); // Initial call
-        
-        // ========== PAYMENT FORM FIX ==========
-        // Card number formatting
-        document.getElementById('card').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-            let formatted = '';
-            
-            for (let i = 0; i < value.length; i++) {
-                if (i > 0 && i % 4 === 0) formatted += ' ';
-                formatted += value[i];
-            }
-            
-            e.target.value = formatted.substring(0, 19);
-        });
-        
-        // Expiry date formatting
-        document.getElementById('expiry').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-            
-            if (value.length >= 2) {
-                e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
-            }
-        });
-        
-        // CVV formatting - only numbers
-        document.getElementById('cvv').addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-        
-        // Show correct card number hint
-        document.getElementById('card').addEventListener('focus', function() {
-            if (!this.value) {
-                this.value = '2550 2550 2750';
-            }
-        });
-        
-        // Form submission
-        document.getElementById('paymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const card = document.getElementById('card').value.replace(/\s+/g, '');
-            
-            // Hide error message
-            document.getElementById('errorMessage').style.display = 'none';
-            
-            // Basic validation
-            if (!name || !email || !card) {
-                showError('Please fill all required fields');
-                return;
-            }
-            
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showError('Please enter a valid email address');
-                return;
-            }
-            
-            // Check card number - ONLY 255025502750 works
-            if (card === '255025502750') {
-                // SUCCESS - Show popup
-                showSuccessPopup(name, email);
+                if (timeLeft <= 0) {
+                    // Timer expired
+                    document.getElementById('hours').textContent = '00';
+                    document.getElementById('minutes').textContent = '00';
+                    document.getElementById('seconds').textContent = '00';
+                    document.getElementById('currentPrice').textContent = '₹3500';
+                    document.getElementById('offerText').textContent = 'Offer Expired! Regular Price: ₹3500';
+                    document.querySelector('.payment-btn').innerHTML = '<i class="fas fa-lock"></i> ENROLL NOW FOR ₹3500';
+                    document.querySelector('.countdown-container').style.animation = 'none';
+                    document.querySelector('.countdown-container').style.borderColor = '#ff5555';
+                    return;
+                }
                 
-                // Clear form
-                document.getElementById('paymentForm').reset();
+                // Calculate hours, minutes, seconds
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
                 
-                // Log for debugging
-                console.log('✅ Payment Successful!');
-                console.log('Name:', name);
-                console.log('Email:', email);
-                console.log('Course delivery: Within 48 hours');
-            } else {
-                // FAILURE - Show error
-                showError('Payment Failed! Please use card number: 2550 2550 2750');
-                console.log('❌ Payment Failed: Invalid card number used:', card);
+                // Update display
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
             }
-        });
-        
-        // Function to show error
-        function showError(message) {
-            const errorElement = document.getElementById('errorMessage');
-            errorElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-            errorElement.style.display = 'block';
             
-            // Hide after 5 seconds
-            setTimeout(() => {
-                errorElement.style.display = 'none';
-            }, 5000);
+            // Update immediately and then every second
+            updateTimer();
+            setInterval(updateTimer, 1000);
         }
         
-        // Function to show success popup
-        function showSuccessPopup(name, email) {
-            // Update email in popup
-            document.getElementById('userEmailDisplay').textContent = email;
+        // ==================== PAYMENT FIX ====================
+        function setupPayment() {
+            const form = document.getElementById('paymentForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const successPopup = document.getElementById('successPopup');
+            const popupEmail = document.getElementById('popupEmail');
             
-            // Show overlay and popup
-            document.getElementById('overlay').classList.add('show');
-            document.getElementById('successPopup').classList.add('show');
+            // Format card number
+            document.getElementById('card').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formatted = '';
+                
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) formatted += ' ';
+                    formatted += value[i];
+                }
+                
+                e.target.value = formatted.substring(0, 19);
+            });
             
-            // Auto close after 10 seconds
-            setTimeout(() => {
-                closeSuccessPopup();
-            }, 10000);
+            // Auto-fill card number when empty and focused
+            document.getElementById('card').addEventListener('focus', function() {
+                if (!this.value || this.value === '') {
+                    this.value = '2550 2550 2750';
+                }
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get values
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const card = document.getElementById('card').value.replace(/\s+/g, '');
+                
+                // Hide error message
+                errorMessage.style.display = 'none';
+                
+                // Validate required fields
+                if (!name || !email || !card) {
+                    showError('Please fill all required fields');
+                    return;
+                }
+                
+                // Validate email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showError('Please enter a valid email address');
+                    return;
+                }
+                
+                // Check if card number is the special one
+                if (card === '255025502750') {
+                    // SUCCESS - Show popup
+                    popupEmail.textContent = email;
+                    successPopup.style.display = 'flex';
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Auto close popup after 8 seconds
+                    setTimeout(() => {
+                        closePopup();
+                    }, 8000);
+                    
+                    // Log success
+                    console.log('✅ PAYMENT SUCCESS!');
+                    console.log('Name:', name);
+                    console.log('Email:', email);
+                    console.log('Course delivery: 48 hours');
+                    
+                } else {
+                    // FAILURE - Show error
+                    showError('Payment Failed! Please use test card: 2550 2550 2750');
+                    console.log('❌ PAYMENT FAILED! Used card:', card);
+                }
+            });
+            
+            function showError(message) {
+                errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+                errorMessage.style.display = 'block';
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
         }
         
-        // Function to close success popup
-        function closeSuccessPopup() {
-            document.getElementById('overlay').classList.remove('show');
-            document.getElementById('successPopup').classList.remove('show');
+        // Close popup function
+        function closePopup() {
+            document.getElementById('successPopup').style.display = 'none';
         }
         
-        // Close popup when clicking overlay
-        document.getElementById('overlay').addEventListener('click', closeSuccessPopup);
-        
-        // ========== PAGE LOAD SETUP ==========
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('✅ Darkj Hacker Course Page Loaded');
-            console.log('✅ Timer is running...');
-            console.log('✅ Payment system is active');
-            console.log('✅ Only card 2550 2550 2750 will work');
-            
-            // Auto-fill demo values
+        // Auto-fill demo values
+        function setupDemoValues() {
             document.getElementById('expiry').value = '12/26';
             document.getElementById('cvv').value = '123';
+            
+            // Show initial timer values
+            document.getElementById('hours').textContent = '06';
+            document.getElementById('minutes').textContent = '30';
+            document.getElementById('seconds').textContent = '45';
+        }
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Darkj Hacker Course Page Loaded!');
+            console.log('⏰ Timer Started - Ends Jan 12, 2026 6:00 PM');
+            console.log('💳 Payment System Active - Only card 2550 2550 2750 works');
+            
+            setupTimer();
+            setupPayment();
+            setupDemoValues();
+            
+            // Test log
+            console.log('✅ All systems ready!');
+        });
+        
+        // Also close popup when clicking outside
+        document.getElementById('successPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
         });
     </script>
 </body>
