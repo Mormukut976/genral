@@ -477,10 +477,6 @@
                 <div class="new-price">₹677</div>
                 <div class="price-note">Today Only! Price increases to ₹3500 at 6:00 PM</div>
                 
-                <div class="special-card">
-                    <strong>SPECIAL TEST CARD:</strong> 2550 2550 2750
-                </div>
-                
                 <form class="payment-form" id="paymentForm">
                     <div class="form-group">
                         <label for="name">Full Name</label>
@@ -494,7 +490,7 @@
                     
                     <div class="form-group">
                         <label for="card">Card Number</label>
-                        <input type="text" id="card" placeholder="2550 2550 2750" required>
+                        <input type="text" id="card" placeholder="0000 0000 0000" required>
                     </div>
                     
                     <div class="card-details">
@@ -513,7 +509,7 @@
                     </button>
                     
                     <div class="message error-message" id="errorMessage">
-                        <i class="fas fa-exclamation-circle"></i> Payment Failed! Please use card: 2550 2550 2750
+                        <i class="fas fa-exclamation-circle"></i> Payment Failed! 
                     </div>
                 </form>
             </div>
@@ -622,7 +618,7 @@
                 
                 // Show error message
                 const errorMsg = document.getElementById('errorMessage');
-                errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Payment Failed! Please use card: 2550 2550 2750';
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Payment Failed! Please use card: another card';
                 errorMsg.style.display = 'block';
                 
                 // Auto hide error after 5 seconds
